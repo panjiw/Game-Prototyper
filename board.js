@@ -44,8 +44,8 @@ if (typeof(module) !== 'undefined') {
       for (var x = 0; x < this.h; x++) {
         for (var y = 0; y < this.w; y++) {
           var symbols = symbol3D[this.h - 1 - y][x];
-          for (var symbol in symbols) {
-            this.moveActor(Actor.symbolMap[symbol].clone(), x, y);
+          for (var i = 0; i < symbols.length; i++) {
+            this.moveActor(Actor.symbolMap[symbols[i]].clone(), x, y);
           }
         }
       }
@@ -67,8 +67,9 @@ if (typeof(module) !== 'undefined') {
     Board.prototype.setActive = function(requirement) {
       for (var x = 0; x < this.h; x++) {
         for (var y = 0; y < this.w; y++) {
-          for (var actor in this.actors[x][y]) {
-            actor.active = actor.passRequirement(requirement);
+          var actors = this.actors[x][y];
+          for (var i = 0; i < actors.length; i++) {
+            actors[i] = actors[i].passRequirement(requirement);
           }
         }
       }
