@@ -81,7 +81,8 @@ if (typeof(module) !== 'undefined') {
         thisTurn.beforeStart();
       }
       if (!thisTurn.player) {
-        for (var task in thisTurn.toDo) {
+        for (var i = 0; i < thisTurn.toDo.length; i++) {
+          var task = thisTurn.toDo[i];
           if (task.action.applicable(task.actor, task.actee)) {
             task.action(task.actor, task.actee);
           }
