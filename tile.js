@@ -11,12 +11,11 @@ if (typeof(module) !== 'undefined') {
   var Tile = (function() {
     var Tile = function(name, symbol, description) {
       Actor.apply(this, [name, symbol, description]);
+      this.addTag("Tile");
     };
 
     Tile.prototype = Object.create(Actor.prototype);
     Tile.prototype.constructor = Tile;
-
-    Tile.addTag("Tile");
 
     return Tile;
   })();
