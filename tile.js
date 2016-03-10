@@ -15,12 +15,24 @@ if (typeof(module) !== 'undefined') {
       this.color = undefined;
     };
 
+    Tile.prototype = Object.create(Actor.prototype);
+    Tile.prototype.constructor = Tile;
+
     Tile.prototype.setColor = function(color) {
       this.color = color;
     };
 
-    Tile.prototype = Object.create(Actor.prototype);
-    Tile.prototype.constructor = Tile;
+    Tile.prototype.clone = function() {
+      var newTile = new Actor(this.name, this.symbol, this.description);
+      newTile.tags = this.tags.slice(0);
+      newTile.actions = this.actions.slice(0);
+      newTile.blacklist = this.blacklist.slice(0);
+      newTile.x = this.x;
+      newTile.y = this.y;
+      newTile.active = this.active;
+      newTile.color = this.color;
+      return newTile;
+    };
 
     return Tile;
   })();
