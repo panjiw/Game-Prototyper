@@ -64,5 +64,12 @@ oTurn.requirementForActiveStart = activeReq;
 oTurn.controllableTag.push("Playable");
 turns.addTurn(oTurn);
 
-var game = new Game(board, turns);
-game.hasSet = false;
+var TicTacToe = new Game(board, turns);
+TicTacToe.hasSet = false;
+
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined')
+  module.exports = {
+    CompleteGame: TicTacToe
+  };
+else
+  window.CompleteGame = TicTacToe;
