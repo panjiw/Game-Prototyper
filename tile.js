@@ -12,6 +12,11 @@ if (typeof(module) !== 'undefined') {
     var Tile = function(name, symbol, description) {
       Actor.apply(this, [name, symbol, description]);
       this.addTag("Tile");
+      this.color = undefined;
+    };
+
+    Tile.prototype.setColor = function(color) {
+      this.color = color;
     };
 
     Tile.prototype = Object.create(Actor.prototype);
