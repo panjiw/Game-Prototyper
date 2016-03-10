@@ -8,13 +8,13 @@
  *  - actions: list of action that this Actor can do
  *  - blacklist: list of actors that this actor cannot do action onto
  *               where actors in the list can have every property undefined
- *               except for the properties to match
- *               non-matchable properties:
+ *               except for the properties required
+ *               non-requireable properties:
  *                - actions
  *                - blacklist
  *  - x: x position on the board
  *  - y: y position on the board
- *  - active: whether this actor can do an action
+ *  - active: whether this actor can do an action (usage optional)
  */
 
 (function() {
@@ -22,10 +22,10 @@
     var Actor = function(name, symbol, description) {
       this.name = name;
       this.symbol = symbol;
-      if (typeof Actor.prototype.symbolMap === 'undefined') {
-        Actor.prototype.symbolMap = {};
+      if (typeof Actor.symbolMap === 'undefined') {
+        Actor.symbolMap = {};
       }
-      Actor.prototype.symbolMap[this.symbol] = this;
+      Actor.symbolMap[this.symbol] = this;
       this.description = description;
       this.tags = [];
       this.actions = [];
@@ -35,6 +35,18 @@
       this.active = false;
     };
 
+    Actor.prototype.clone = function() {
+      var newActor = new Actor(this.name, this.symbol, this.description);
+      newActor.tags = this.tags.slice(0);
+      newActor.actions = this.actions.slice(0);
+      newActor.blacklist = this.blacklist.slice(0);
+      newActor.x = this.x;
+      newActor.y = this.y;
+      newActor.active = this.active;
+      return newActor;
+    };
+
+
     Actor.prototype.addTag = function(type) {
       this.tags.push(type);
     };
@@ -43,39 +55,41 @@
       this.actions.push(action);
     };
 
-    Actor.prototype.getEmptyBlacklistActor = function() {
-      return {
-        name: undefined,
-        symbol: undefined,
-        description: undefined,
-        tags: undefined,
-        x: undefined,
-        y: undefined,
-        active: undefined
-      }
+    Actor.prototype.addBlacklist = function(actor) {
+      this.blacklist.push(actor);
     };
 
-    Actor.prototype.match = function(other) {
+    Actor.getEmptyRequirement = function() {
+      var empty = new Actor();
+      empty.x = undefined;
+      empty.y = undefined;
+      empty.active = undefined;
+      return empty;
+    };
+
+    Actor.prototype.passRequirement = function(requirement) {
       var res = true;
       var checkOnce = false;
       for(var key in this) {
         if (!this.hasOwnProperty(key)) continue;
 
-        if (typeof other[key] !== 'undefined') {
-          checkOnce = true;
+        if (typeof requirement[key] !== 'undefined') {
           switch(key) {
-            case name:
-            case symbol:
-            case description:
-            case x:
-            case y:
-            case active:
-              res &= this[key] === other[key]
+            case "name":
+            case "symbol":
+            case "description":
+            case 'x':
+            case 'y':
+            case "active":
+              checkOnce = true;
+              res &= this[key] === requirement[key];
               break;
-            case tags:
-              for (var i = 0; i < other.tags.length; i++) {
-                res &= this.tags.indexOf(other.tags[i]) >= 0;
+            case "tags":
+              for (var i = 0; i < requirement.tags.length; i++) {
+                checkOnce = true;
+                res &= this.tags.indexOf(requirement.tags[i]) >= 0;
               }
+              break;
             default:
               break;
           }
