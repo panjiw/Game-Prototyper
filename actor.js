@@ -26,6 +26,7 @@
         Actor.symbolMap = {};
       }
       Actor.symbolMap[this.symbol] = this;
+      this.representation = undefined;
       this.description = description;
       this.tags = [];
       this.actions = [];
@@ -46,6 +47,10 @@
       return newActor;
     };
 
+
+    Actor.prototype.setRepresentation = function(representation) {
+      this.representation = representation;
+    };
 
     Actor.prototype.addTag = function(type) {
       this.tags.push(type);
