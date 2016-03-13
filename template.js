@@ -91,18 +91,18 @@ var activeReq = Actor.getEmptyRequirement();
 activeReq.addTag("Playable");
 var resetHasSet = function() {
   CompleteGame.hasSet = false;
-}
-var xTurn = Turns.getPlayerTurn();
+};
+var xTurn = Turns.getPlayerTurn("Player 1");
 xTurn.requirementForActiveStart = activeReq;
 xTurn.beforeStart = resetHasSet;
 turns.addTurn(xTurn);
 
-var oTurn = Turns.getPlayerTurn();
+var oTurn = Turns.getPlayerTurn("Player 2");
 oTurn.requirementForActiveStart = activeReq;
 oTurn.beforeStart = resetHasSet;
 turns.addTurn(oTurn);
 
-var autoTurn = Turns.getEmptyTurn();
+var autoTurn = Turns.getEmptyTurn("Auto");
 var toDo = Turns.getEmptyToDo();
 toDo.setActor(board.actors[2][2][0]);
 toDo.setAction(changeToX);

@@ -36,8 +36,9 @@ if (typeof(module) !== 'undefined') {
       return toDo;
     };
 
-    Turns.getEmptyTurn = function() {
+    Turns.getEmptyTurn = function(aName) {
       var turn = {
+        name: aName,
         requirementForActiveStart: undefined,
         beforeStart: undefined,
         afterEndTurn: undefined,
@@ -46,12 +47,13 @@ if (typeof(module) !== 'undefined') {
       };
       turn.addToDo = function(toDo) {
         this.toDo.push(toDo);
-      }
+      };
       return turn;
     };
 
-    Turns.getPlayerTurn = function() {
+    Turns.getPlayerTurn = function(pName) {
       return {
+        name: pName,
         requirementForActiveStart: undefined,
         beforeStart: undefined,
         afterEndTurn: undefined,
@@ -72,7 +74,7 @@ if (typeof(module) !== 'undefined') {
     };
 
     Turns.prototype.finishTurn = function() {
-      var thisTurn = this.turnOrder[this.currentTurn];
+      var thisTurn = this.getCurrentTurn();
       if (typeof thisTurn.afterEndTurn !== 'undefined') {
         thisTurn.afterEndTurn();
       }
@@ -84,7 +86,7 @@ if (typeof(module) !== 'undefined') {
     };
 
     Turns.prototype.startTurn = function() {
-      var thisTurn = this.turnOrder[this.currentTurn];
+      var thisTurn = this.getCurrentTurn();
       if (typeof thisTurn.requirementForActiveStart !== 'undefined') {
         this.game.board.setActive(thisTurn.requirementForActiveStart);
       }
@@ -100,6 +102,10 @@ if (typeof(module) !== 'undefined') {
         }
         this.finishTurn();
       }
+    };
+
+    Turns.prototype.getCurrentTurn = function() {
+      return this.turnOrder[this.currentTurn];
     };
 
     return Turns;
