@@ -17,6 +17,7 @@ if (typeof(module) !== 'undefined') {
     var Board = function(h, w) {
       this.h = h;
       this.w = w;
+      this.borderColor = undefined;
       this.actors = [];
       this.tiles = [];
       for (var i = 0; i < w; i++) {
@@ -62,6 +63,10 @@ if (typeof(module) !== 'undefined') {
       this.actors[x][y].push(actor);
       actor.x = x;
       actor.y = y;
+    };
+
+    Board.prototype.setBorderColor = function(color) {
+      this.borderColor = color;
     };
 
     Board.prototype.setActive = function(requirement) {

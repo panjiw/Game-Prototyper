@@ -29,6 +29,7 @@
       this.representation = undefined;
       this.description = description;
       this.tags = [];
+      this.color = undefined;
       this.actions = [];
       this.blacklist = [];
       this.x = -1;
@@ -41,12 +42,17 @@
       newActor.tags = this.tags.slice(0);
       newActor.actions = this.actions.slice(0);
       newActor.blacklist = this.blacklist.slice(0);
+      newActor.representation = this.representation;
+      newActor.color = this.color;
       newActor.x = this.x;
       newActor.y = this.y;
       newActor.active = this.active;
       return newActor;
     };
 
+    Actor.prototype.setColor = function(color) {
+      this.color = color;
+    };
 
     Actor.prototype.setRepresentation = function(representation) {
       this.representation = representation;

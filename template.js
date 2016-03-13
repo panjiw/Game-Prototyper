@@ -10,6 +10,17 @@ if (typeof(module) !== 'undefined') {
 var board = new Board(3, 3);
 
 var baseTile = new Tile("base", 'b', 'Base tile, does nothing');
+// baseTile.setColor("White");
+board.setBorderColor("black")
+// var tiles2D = [['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
+//               ['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
+//               ['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
+//               ['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
+//               ['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
+//               ['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
+//               ['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
+//               ['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
+//               ['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b']];
 var tiles2D = [['b', 'b', 'b'],
                ['b', 'b', 'b'],
                ['b', 'b', 'b']];
@@ -42,7 +53,22 @@ changeToO.setAct(function(self, other) {
 xo.addAction(changeToX);
 xo.addAction(changeToO);
 
-var actors3D = [[['p'], ['p'], ['p']],
+var other = new Actor("Other", 'O', "gdfhdhfj");
+other.setRepresentation("https://marcelk.net/bookie/img/chesspieces/wikipedia/wK.png");
+
+var o2 = new Actor("o2", 'H', "hkkgg");
+o2.setRepresentation("https://marcelk.net/bookie/img/chesspieces/wikipedia/bR.png");
+
+var actors3D = [[['p', 'O', 'H'], ['p'], ['p']], 
+  // [['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p']],
+  // [['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p']],
+  // [['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p']],
+  // [['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p']],
+  // [['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p']],
+  // [['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p']],
+  // [['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p']],
+  // [['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p']],
+  // [['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p']]];
   [['p'], ['p'], ['p']],
   [['p'], ['p'], ['p']]];
 board.fillActors(actors3D);

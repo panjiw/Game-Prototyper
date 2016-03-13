@@ -1,55 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>tutorial</title>
-        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    </head>
-    <body>
-      <div id="container" style="margin-right: 15px; float:left">
-      </div>
-      <table id='actors' border='2' style="float:left; margin-right:5px; border-collapse: collapse;">
-       <thead>
-        <tr>
-            <th>Actors</th>
-        </tr>
-        </thead>
-        <tbody id='actorTableBody'>
-        </tbody>
-      </table>
+<head>
+  <meta charset="utf-8">
+  <title>Template</title>
+  <script src="game.js"></script>
+  <script src="actor.js"></script>
+  <script src="tile.js"></script>
+  <script src="board.js"></script>
+  <script src="action.js"></script>
+  <script src="turns.js"></script>
+  <script src="template.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body>
+  <div id="container" style="margin-right: 15px; float:left">
+  </div>
+  <table id='actors' border='2' style="float:left; margin-right:5px; border-collapse: collapse;">
+   <thead>
+    <tr>
+      <th>Actors</th>
+    </tr>
+  </thead>
+  <tbody id='actorTableBody'>
+  </tbody>
+</table>
 
-      <table id='actions' border='2' style="float:left; margin-right:5px; border-collapse: collapse;">
-       <thead>
-        <tr>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody id='actionTableBody'>
-        </tbody>
-      </table>
+<table id='actions' border='2' style="float:left; margin-right:5px; border-collapse: collapse;">
+ <thead>
+  <tr>
+    <th>Actions</th>
+  </tr>
+</thead>
+<tbody id='actionTableBody'>
+</tbody>
+</table>
 
-
-
-      <script>
-        document.createSvg = function(tagName) {
-            var svgNS = "http://www.w3.org/2000/svg";
-            return this.createElementNS(svgNS, tagName);
-        };
-        var svg = document.createSvg("svg");
+<table id='actees' border='2' style="float:left; margin-right:5px; border-collapse: collapse;">
+ <thead>
+  <tr>
+    <th>Actees</th>
+  </tr>
+</thead>
+<tbody id='acteesTableBody'>
+</tbody>
+</table>
+<script>
+document.createSvg = function(tagName) {
+  var svgNS = "http://www.w3.org/2000/svg";
+  return this.createElementNS(svgNS, tagName);
+};
+var svg = document.createSvg("svg");
         // var numberPerSide = 20;
         // var size = 10;
         // var pixelsPerSide = 400;
 
         var WIDTH;
         var HEIGHT;
+        var activeActor;
+        var activeAction;
+        var selectedActor, selectedAction;
 
         var grid = function(x, y, size, pixelsPerSide, colors) {
-            WIDTH = x;
-            HEIGHT = y;
-            svg.setAttribute("width", pixelsPerSide);
-            svg.setAttribute("height", pixelsPerSide);
-            svg.setAttribute("viewBox", [0, 0, x * size, y * size].join(" "));
+          WIDTH = x;
+          HEIGHT = y;
+          svg.setAttribute("width", pixelsPerSide);
+          svg.setAttribute("height", pixelsPerSide);
+          svg.setAttribute("viewBox", [0, 0, x * size, y * size].join(" "));
+            // svg.setAttribute('str')
 
+            var borderColor = 'black'
+            if (typeof board.borderColor !== 'undefined')
+              borderColor = board.borderColor;
+            
+            svg.style.outline = '9px solid ' + borderColor;
             for(var i = 0; i < x; i++) { // x
                 for(var j = 0; j < y; j++) { // y
 
@@ -58,13 +81,15 @@
                   if (color1 == color2 && color1 != 'black') color2 = 'black';
                   else if (color1 == color2) color2 = 'white';
                   var g = document.createSvg("g");
-                  g.setAttribute("transform", ["translate(", i*size, ",", j*size, ")"].join(""));
+                  g.setAttribute("transform", ["translate(", i*size, ",", (y-1-j)*size, ")"].join(""));
                   var number = y * i + j;
                   var box = document.createSvg("rect");
                   box.setAttribute("actorCount", 0);
                   box.setAttribute("width", size);
                   box.setAttribute("height", size);
                   box.setAttribute("fill", color1);
+                  box.setAttribute('stroke', borderColor);
+                  box.setAttribute('stroke-width', .25);
                   box.setAttribute("id", "b" + number);
                   box.setAttribute("xpos", i);
                   box.setAttribute("ypos", j);
@@ -75,11 +100,14 @@
                   highlight.setAttribute("width", size);
                   highlight.setAttribute("height", size);
                   highlight.setAttribute("fill", '#33FF00');
-                  highlight.setAttribute("stroke", '#339900');
+                  // highlight.setAttribute("stroke", '#339900');
+                  highlight.setAttribute('x', .1);
+                  highlight.setAttribute('y', -.1);
+
                   highlight.setAttribute("xpos", i);
                   highlight.setAttribute("ypos", j);
                   highlight.setAttribute("fill-opacity", 0);
-                  highlight.setAttribute("stroke-opacity", 0);
+                  // highlight.setAttribute("stroke-opacity", 0);
 
 
                   var text = document.createSvg("text");
@@ -115,9 +143,9 @@
                   g.appendChild(highlight);
                   svg.appendChild(g);
                 }  
-            }
-            svg.addEventListener(
-                "click", function(e) {showActors(e.target.getAttribute('xpos'), e.target.getAttribute('ypos'))},
+              }
+              svg.addEventListener(
+               "click", function(e) {showActors(e.target.getAttribute('xpos'), e.target.getAttribute('ypos'))},
                 // function(e){
                 //     var id = e.target;//.id;
                 //     console.log(id);
@@ -129,20 +157,43 @@
                 //     }
                 // },
                 false);
-            return svg;
-        };
+              return svg;
+            };
 
-        function showActors(x, y) {
+            function showActors(x, y) {
           // board should a 3D array with x and y as the key(position) and value is an array of actors on that position
           // TODO: FIX VARIBALE NAME
-          var arr = board.actors[x][y];
 
-          for (i in arr)
-            insertActorRow(arr[i].name, arr);
+          var actors = board.actors[x][y];
+          var highlight = false;
+          if (typeof activeAction !== 'undefined') {
+            for (i in actors) {
+              if (activeAction.applicable(activeActor, actors[i])) {
+                insertActeeRow(actors[i]);
+                highlight = true;
+              }
+            }
+            selectedActor = activeActor;
+            selectedAction = activeAction;
+            activeActor = undefined;
+            activeAction = undefined;
+          }
+          clearHighlight();
+          if (!highlight) {
+            clearTables('actorTableBody');
+            for (i in actors) {
+              insertActorRow(actors[i].name, actors);
+            }
+            clearTables('actionTableBody');
+            clearTables('acteesTableBody');
+          }
         }
+
+
+
         var container = document.getElementById("container");
 
-        container.appendChild(grid(2, 2, 10, 600, ["tan", "brown"]));
+        container.appendChild(grid(CompleteGame.board.w, CompleteGame.board.h, 10, 600, ["tan", "brown"]));
 
         // top left of board object is 0, 0
         function placeActor(x, y, c, link) {
@@ -208,7 +259,7 @@
         function clearHighlight() {
           for (var i = 0; i < svg.children.length; i++) {
             var highlight = svg.children[i].children[4];
-            highlight.setAttribute('stroke-opacity', 0);
+            // highlight.setAttribute('stroke-opacity', 0);
             highlight.setAttribute('fill-opacity', 0);
           }
         }
@@ -217,7 +268,7 @@
           var r = getElementAt(x, y);
           var child = r.children;
           var highlight = child[4];
-          highlight.setAttribute('stroke-opacity', 0.75);
+          // highlight.setAttribute('stroke-opacity', 0.75);
           highlight.setAttribute('fill-opacity', 0.5);
         }
 
@@ -246,12 +297,12 @@
           newCell.appendChild(newText);
           newCell.addEventListener('click', function(e) {
             var name = e.target.innerHTML;
-
+            clearTables('actionTableBody');
             // loop through the arr, and find the first instance of the text
             for (i in arr) {
               if (text == arr[i].name)
                 // need the list of actions!!
-                insertActionRow(arr[i])
+              insertActionRow(arr[i])
             }
             // var actors = board.actors[e.target.getAttribute('xpos')][]
             // alert(text);
@@ -261,6 +312,8 @@
         function insertActionRow(actor) {
           // TODO: FIX VARIABLE NAME
           var acts = actor.actions;
+          clearHighlight();
+          clearTables('acteesTableBody');
 
 
           // TODO: make sure acts array has all legal actions
@@ -278,56 +331,130 @@
             // TODO: assuming action has .name field
             // TODO: assuming acts
             var newText  = document.createTextNode(acts[i].name);
+            newCell.id = i + ' action';
             newCell.appendChild(newText);
             newCell.addEventListener('click', function(e) {
               var t = e.target.innerHTML;
+              clearTables('acteesTableBody');
               // TODO: 
-              highlightPossibleTile(t);
+              // alert(acts);
+              var act = acts[parseInt(e.currentTarget.id, 10)];
+              highlightPossibleTile(act, actor);
             }, false);
+          }
+        }
+
+
+        function insertActeeRow(actee) {
+
+          // TODO: make sure acts array has all legal actions
+          // for (i in acts) {
+            var tableRef = document.getElementById('actees').getElementsByTagName('tbody')[0];
+
+            // Insert a row in the table at the last row
+            var newRow   = tableRef.insertRow(tableRef.rows.length);
+
+            // Insert a cell in the row at index 0
+            var newCell  = newRow.insertCell(0);
+
+            // Append a text node to the cell
+
+            // TODO: assuming action has .name field
+            // TODO: assuming acts
+            var newText  = document.createTextNode(actee.name);
+            // newCell.id = i + ' action';
+            newCell.appendChild(newText);
+            newCell.addEventListener('click', function(e) {
+              clearHighlight();
+              clearTables('acteesTableBody');
+              clearTables('actorTableBody');
+              clearTables('actionTableBody');
+
+              selectedAction.act(selectedActor, actee);
+
+            }, false);
+
           }
 
           // TODO: assuming that arr is the action
-          function highlightPossibleTile(arr) {
+          function highlightPossibleTile(action, actor) {
+            activeActor = actor;
+            activeAction = action;
             for (var i = 0; i < HEIGHT; i++) {
               for (var j = 0; j < WIDTH; j++) {
+                var actors = board.actors[j][i];
+                for (var k = 0; k < actors.length; k++) {
                 // TODO: CHECK POSITION OF board and hightlight if action
                 // can be performed
-
-                var color = getElementAt(j, i).children[0].getAttribute('fill');
+                if (action.applicable(actor, actors[k]))
+                  highlight(j, i);
+                break;
               }
             }
           }
         }
 
 
-
-
         // clearBoth is a boolean
-        function clearTables(clearBoth) {
-          var actions = document.getElementById('actionTableBody');
-          var actors = document.getElementById('actorTableBody');
-          actors.innerHTML = "";
-          if (clearBoth)
-            actions.innerHTML = "";
+        function clearTables(id) {
+          var actions = document.getElementById(id);
+          // var actors = document.getElementById('actorTableBody');
+          // actors.innerHTML = "";
+          // if (clearBoth)
+          actions.innerHTML = "";
         }
 
         function drawBoard() {
           var actors = board.actors;
           // for each actor list in actors, draw element on board
-          for (var i = 0; i < HEIGHT; i++) {
-            for (var j = 0; j < WIDTH; j++) {
+          for (var i = 0; i < WIDTH; i++) {
+            for (var j = 0; j < HEIGHT; j++) {
               // TODO: fill board for each actor list
               // can be performed
-              var actorList = actors[j, i]; // list of actors at tile j, i
+              var tile = getElementAt(i, j);
+              var rect = tile.children[0];
+              var img = tile.children[1];
+              var text = tile.children[2];
+              var actorList = actors[i][j]; // list of actors at tile j, i
               if (actorList.length > 1) {
-                getElementAt(j, i).children[3].innerHTML = actorList.length;
+                tile.children[3].innerHTML = actorList.length;
               } else {
-                getElementAt(j, i).children[3].innerHTML = "";
+                tile.children[3].innerHTML = "";
+              }
+              if (typeof CompleteGame.board.tiles[i][j].color !== 'undefined')
+                rect.setAttribute('fill', CompleteGame.board.tiles[i][j].color);
+              
+              for(var k = 0; k < actorList.length; k++) {
+                var actor = actorList[k];
+                var symbolColor = 'black';
+                if (typeof actor.color !== 'undefined')
+                  symbolColor = actor.color;
+                if (typeof actor.representation !== 'undefined') {
+
+                  // create svgimg and append to rect
+                  var svgimg = document.createElementNS('http://www.w3.org/2000/svg','image');
+                  svgimg.setAttributeNS(null,'height', 10);
+                  svgimg.setAttributeNS(null,'width', 10);
+                  svgimg.setAttributeNS('http://www.w3.org/1999/xlink','href', actor.representation);
+                  svgimg.setAttributeNS(null,'x','0');
+                  svgimg.setAttributeNS(null,'y','0');
+                  svgimg.setAttributeNS(null, 'visibility', 'visible');
+                  svgimg.setAttributeNS(null, "xpos", i);
+                  svgimg.setAttributeNS(null, "ypos", j);
+                  tile.appendChild(svgimg);
+
+                  // img.setAttributeNS('http://www.w3.org/1999/xlink','href', actor.representation);
+                  // text.innerHTML = '';
+                } else {
+                  img.setAttributeNS('http://www.w3.org/1999/xlink','href', '');
+                  text.innerHTML = actor.symbol;
+                  text.setAttribute('fill', symbolColor);
+                }
               }
             }
           }
         }
 
-      </script>
-    </body>
-</html>
+        </script>
+      </body>
+      </html>

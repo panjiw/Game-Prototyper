@@ -23,10 +23,11 @@ if (typeof(module) !== 'undefined') {
     };
 
     Tile.prototype.clone = function() {
-      var newTile = new Actor(this.name, this.symbol, this.description);
+      var newTile = new Tile(this.name, this.symbol, this.description);
       newTile.tags = this.tags.slice(0);
       newTile.actions = this.actions.slice(0);
       newTile.blacklist = this.blacklist.slice(0);
+      newTile.representation = this.representation;
       newTile.x = this.x;
       newTile.y = this.y;
       newTile.active = this.active;
