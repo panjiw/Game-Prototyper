@@ -34,20 +34,29 @@ var onlyMyself = function(self, other) {
   return self.set ? false : self === other;
 };
 
+var falseRequirement = Actor.getEmptyRequirement();
+falseRequirement.addTag("None");
+
 var changeToX = new Action("X", "Change to X");
 changeToX.setApplicabilityChecker(onlyMyself);
 changeToX.setAct(function(self, other) {
   self.set = true;
-  self.value = 'x';
-  self.active = false;
+  var ind = self.tags.indexOf("Playable");
+  self.tags.splice(ind, 1);
+  CompleteGame.hasSet = true;
+  self.symbol = 'X';
+  CompleteGame.board.setActive(falseRequirement);
 });
 
 var changeToO = new Action("O", "Change to O");
 changeToO.setApplicabilityChecker(onlyMyself);
 changeToO.setAct(function(self, other) {
   self.set = true;
-  self.value = 'o';
-  self.active = false;
+  var ind = self.tags.indexOf("Playable");
+  self.tags.splice(ind, 1);
+  CompleteGame.hasSet = true;
+  self.symbol = 'O';
+  CompleteGame.board.setActive(falseRequirement);
 });
 
 xo.addAction(changeToX);
@@ -59,7 +68,7 @@ other.setRepresentation("https://marcelk.net/bookie/img/chesspieces/wikipedia/wK
 var o2 = new Actor("o2", 'H', "hkkgg");
 o2.setRepresentation("https://marcelk.net/bookie/img/chesspieces/wikipedia/bR.png");
 
-var actors3D = [[['p', 'O', 'H'], ['p'], ['p']], 
+var actors3D = [[['p'], ['p'], ['p']], 
   // [['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p']],
   // [['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p']],
   // [['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p'], ['p']],
@@ -80,15 +89,31 @@ turns.setTurnCompleteChecker(function(game) {
 
 var activeReq = Actor.getEmptyRequirement();
 activeReq.addTag("Playable");
+var resetHasSet = function() {
+  CompleteGame.hasSet = false;
+}
 var xTurn = Turns.getPlayerTurn();
 xTurn.requirementForActiveStart = activeReq;
-xTurn.controllableTag.push("Playable");
+xTurn.beforeStart = resetHasSet;
 turns.addTurn(xTurn);
 
 var oTurn = Turns.getPlayerTurn();
 oTurn.requirementForActiveStart = activeReq;
-oTurn.controllableTag.push("Playable");
+oTurn.beforeStart = resetHasSet;
 turns.addTurn(oTurn);
+
+var autoTurn = Turns.getEmptyTurn();
+var toDo = Turns.getEmptyToDo();
+toDo.setActor(board.actors[2][2][0]);
+toDo.setAction(changeToX);
+toDo.setActee(board.actors[2][2][0]);
+autoTurn.addToDo(toDo);
+toDo = Turns.getEmptyToDo();
+toDo.setActor(board.actors[0][0][0]);
+toDo.setAction(changeToX);
+toDo.setActee(board.actors[1][0][0]);
+autoTurn.addToDo(toDo);
+turns.addTurn(autoTurn);
 
 var TicTacToe = new Game(board, turns);
 TicTacToe.hasSet = false;

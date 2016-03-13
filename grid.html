@@ -44,7 +44,22 @@
 <tbody id='acteesTableBody'>
 </tbody>
 </table>
+
+<button type="button" id='endTurn' style="float:left;">End Turn</button>
+
+
 <script>
+
+window.onload = function() {
+  document.getElementById('endTurn').addEventListener('click', function(e) {
+    turns.finishTurn();
+    drawBoard();    
+    }, false);
+  drawBoard();
+  turns.startTurn();
+}
+
+
 document.createSvg = function(tagName) {
   var svgNS = "http://www.w3.org/2000/svg";
   return this.createElementNS(svgNS, tagName);
@@ -162,7 +177,6 @@ var svg = document.createSvg("svg");
 
             function showActors(x, y) {
           // board should a 3D array with x and y as the key(position) and value is an array of actors on that position
-          // TODO: FIX VARIBALE NAME
 
           var actors = board.actors[x][y];
           var highlight = false;
@@ -182,8 +196,11 @@ var svg = document.createSvg("svg");
           if (!highlight) {
             clearTables('actorTableBody');
             for (i in actors) {
-              insertActorRow(actors[i].name, actors);
+              if (actors[i].active) {
+                insertActorRow(actors[i].name, actors);
+              }
             }
+
             clearTables('actionTableBody');
             clearTables('acteesTableBody');
           }
@@ -371,7 +388,7 @@ var svg = document.createSvg("svg");
               clearTables('actionTableBody');
 
               selectedAction.act(selectedActor, actee);
-
+              drawBoard();
             }, false);
 
           }
@@ -407,6 +424,7 @@ var svg = document.createSvg("svg");
         function drawBoard() {
           var actors = board.actors;
           // for each actor list in actors, draw element on board
+          document.getElementById('endTurn').disabled =  !turns.isTurnComplete();
           for (var i = 0; i < WIDTH; i++) {
             for (var j = 0; j < HEIGHT; j++) {
               // TODO: fill board for each actor list

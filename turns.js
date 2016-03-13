@@ -19,22 +19,35 @@ if (typeof(module) !== 'undefined') {
     };
 
     Turns.getEmptyToDo = function() {
-      return {
+      var toDo = {
         actor: undefined,
         action: undefined,
         actee: undefined
-      }
+      };
+      toDo.setActor = function(actor) {
+        this.actor = actor;
+      };
+      toDo.setAction = function(action) {
+        this.action = action;
+      };
+      toDo.setActee = function(actee) {
+        this.actee = actee;
+      };
+      return toDo;
     };
 
     Turns.getEmptyTurn = function() {
-      return {
+      var turn = {
         requirementForActiveStart: undefined,
         beforeStart: undefined,
         afterEndTurn: undefined,
         toDo: [],
-        controllableTag: [],
         player: false
       };
+      turn.addToDo = function(toDo) {
+        this.toDo.push(toDo);
+      }
+      return turn;
     };
 
     Turns.getPlayerTurn = function() {
@@ -42,8 +55,6 @@ if (typeof(module) !== 'undefined') {
         requirementForActiveStart: undefined,
         beforeStart: undefined,
         afterEndTurn: undefined,
-        toDo: [],
-        controllableTag: [],
         player: true
       };
     };
@@ -84,10 +95,10 @@ if (typeof(module) !== 'undefined') {
         for (var i = 0; i < thisTurn.toDo.length; i++) {
           var task = thisTurn.toDo[i];
           if (task.action.applicable(task.actor, task.actee)) {
-            task.action(task.actor, task.actee);
+            task.action.act(task.actor, task.actee);
           }
         }
-        thisTurn.finishTurn();
+        this.finishTurn();
       }
     };
 

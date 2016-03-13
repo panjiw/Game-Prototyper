@@ -74,7 +74,7 @@ if (typeof(module) !== 'undefined') {
         for (var y = 0; y < this.w; y++) {
           var actors = this.actors[x][y];
           for (var i = 0; i < actors.length; i++) {
-            actors[i] = actors[i].passRequirement(requirement);
+            actors[i].active = actors[i].passRequirement(requirement);
           }
         }
       }
