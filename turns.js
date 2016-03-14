@@ -14,8 +14,9 @@ if (typeof(module) !== 'undefined') {
       this.numCycles = 0;
       this.currentTurn = 0;
       this.turnOrder = [];
-      this.turnCompleteChecker = function() { return true; };
+      this.turnCompleteChecker = function(game) { return true; };
       this.game = undefined;
+      this.gameOverChecker = function(game) { return false; }
     };
 
     Turns.getEmptyToDo = function() {
@@ -69,8 +70,16 @@ if (typeof(module) !== 'undefined') {
       this.turnCompleteChecker = checker;
     };
 
-    Turns.prototype.isTurnComplete= function() {
+    Turns.prototype.isTurnComplete = function() {
       return this.turnCompleteChecker(this.game);
+    };
+
+    Turns.prototype.setGameOverChecker = function(checker) {
+      this.gameOverChecker = checker;
+    };
+
+    Turns.prototype.isGameOver = function() {
+      return this.gameOverChecker(this.game);
     };
 
     Turns.prototype.finishTurn = function() {
