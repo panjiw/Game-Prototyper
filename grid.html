@@ -2,15 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Template</title>
+  <title></title>
   <script src="game.js"></script>
   <script src="actor.js"></script>
   <script src="tile.js"></script>
   <script src="board.js"></script>
   <script src="action.js"></script>
   <script src="turns.js"></script>
-  <script src="template.js"></script>
-  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src="rules.js"></script>
 </head>
 <body style="font-family:Rockwell, Georgia, Calibri;">
 
@@ -72,6 +71,8 @@
 <script>
 
 window.onload = function() {
+  var container = document.getElementById("container");
+  container.appendChild(grid(CompleteGame.board.w, CompleteGame.board.h, 10, 600, ["tan", "brown"]));
   document.getElementById('endTurn').addEventListener('click', function(e) {
     CompleteGame.turns.finishTurn();
     drawBoard();
@@ -89,7 +90,8 @@ window.onload = function() {
         }
       }
     }, false);
-  document.getElementById('title').innerHTML = CompleteGame.title;
+  document.getElementById('title').innerHTML = CompleteGame.title;  
+  document.title = CompleteGame.title;
   updateStats();
   drawBoard();
   CompleteGame.turns.startTurn();
@@ -283,11 +285,6 @@ var svg = document.createSvg("svg");
             document.getElementById("gameOver").style.visibility = "visible";
           }
         }
-
-
-        var container = document.getElementById("container");
-
-        container.appendChild(grid(CompleteGame.board.w, CompleteGame.board.h, 10, 600, ["tan", "brown"]));
 
         // top left of board object is 0, 0
         function placeActor(x, y, c, link) {
