@@ -115,7 +115,7 @@ toDo.setActee(board.actors[1][0][0]);
 autoTurn.addToDo(toDo);
 turns.addTurn(autoTurn);
 
-var TicTacToe = new Game(board, turns);
+var TicTacToe = new Game("Tic Tac Toe", board, turns);
 TicTacToe.hasSet = false;
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined')

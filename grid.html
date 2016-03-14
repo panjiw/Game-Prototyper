@@ -13,8 +13,20 @@
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 </head>
 <body>
-  <div id="container" style="margin-right: 15px; float:left">
+<div id='stats' style="float:left; margin-right:20px">
+  <div><b>Turn Number</b><p id="numTurns" style="text-align:center;">0</p></div>
+  <div><b>Total Turn Cycles</b><p id="numCycles" style="text-align:center;">0</p></div>
+  <div><b>Current Turn</b><p id="currentTurn" style="text-align:center;"></p></div>
+  <div><b>Turn Order</b><ol id="turnOrder" style="padding:15px; margin:0px; top:50%;"></ol> </div>
+  <div style="text-align: center;">
+    <button type="button" id='endTurn' style="margin-right:auto; margin-left:auto;">End Turn</button>
   </div>
+</div>
+
+<div id="container" style="margin-right: 15px; float:left">
+</div>
+
+<div id='tables' style="float:left">
   <table id='actors' border='2' style="float:left; margin-right:5px; border-collapse: collapse;">
    <thead>
     <tr>
@@ -23,42 +35,48 @@
   </thead>
   <tbody id='actorTableBody'>
   </tbody>
-</table>
-
-<table id='actions' border='2' style="float:left; margin-right:5px; border-collapse: collapse;">
- <thead>
-  <tr>
-    <th>Actions</th>
-  </tr>
-</thead>
-<tbody id='actionTableBody'>
-</tbody>
-</table>
-
-<table id='actees' border='2' style="float:left; margin-right:5px; border-collapse: collapse;">
- <thead>
-  <tr>
-    <th>Actees</th>
-  </tr>
-</thead>
-<tbody id='acteesTableBody'>
-</tbody>
-</table>
-
-<button type="button" id='endTurn' style="float:left;">End Turn</button>
-
+  </table>
+  <table id='actions' border='2' style="float:left; margin-right:5px; border-collapse: collapse;">
+   <thead>
+    <tr>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id='actionTableBody'>
+  </tbody>
+  </table>
+  <table id='actees' border='2' style="float:left; margin-right:5px; border-collapse: collapse; clear: right">
+   <thead>
+    <tr>
+      <th>Actees</th>
+    </tr>
+  </thead>
+  <tbody id='acteesTableBody'>
+  </tbody>
+  </table>
+</div>
 
 <script>
 
 window.onload = function() {
   document.getElementById('endTurn').addEventListener('click', function(e) {
     turns.finishTurn();
-    drawBoard();    
+    drawBoard();
+    updateStats();
     }, false);
+  updateStats();
   drawBoard();
   turns.startTurn();
+  for (i in turns.turnOrder) {
+    document.getElementById('turnOrder').innerHTML += "<li>" + turns.turnOrder[i].name + "</li>"; 
+  }
 }
 
+function updateStats() {
+  document.getElementById("numTurns").innerHTML = turns.numTurns + 1;
+  document.getElementById("numCycles").innerHTML = turns.numCycles + 1;
+  document.getElementById("currentTurn").innerHTML = turns.getCurrentTurn().name;
+}
 
 document.createSvg = function(tagName) {
   var svgNS = "http://www.w3.org/2000/svg";
@@ -74,10 +92,12 @@ var svg = document.createSvg("svg");
         var activeActor;
         var activeAction;
         var selectedActor, selectedAction;
+        var BOARD_DIMENSION;
 
         var grid = function(x, y, size, pixelsPerSide, colors) {
           WIDTH = x;
           HEIGHT = y;
+          BOARD_DIMENSION = pixelsPerSide;
           svg.setAttribute("width", pixelsPerSide);
           svg.setAttribute("height", pixelsPerSide);
           svg.setAttribute("viewBox", [0, 0, x * size, y * size].join(" "));
