@@ -277,7 +277,29 @@ var svg = document.createSvg("svg");
               selectedAction.act(selectedActor, lastActee);
               drawBoard();
               updateGameOver();
+              if (noActives()) {
+                endTurn();
+              }
           }
+        }
+
+        function endTurn() {
+          CompleteGame.turns.finishTurn();
+          drawBoard();
+          updateStats();
+        }
+
+        function noActives() {
+          for (var i = 0; i < HEIGHT; i++) {
+            for (var j = 0; j < WIDTH; j++) {
+              var actors = CompleteGame.board.actors[j][i];
+              for (var k = 0; k < actors.length; k++) {
+                if (actors[k].active)
+                  return false;
+              }
+            }
+          }
+          return true;
         }
 
         function updateGameOver() {
@@ -481,6 +503,9 @@ var svg = document.createSvg("svg");
               selectedAction.act(selectedActor, actee);
               drawBoard();
               updateGameOver();
+              if (noActives()) {
+                endTurn();
+              }
             }, false);
 
           }
