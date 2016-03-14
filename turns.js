@@ -82,6 +82,10 @@ if (typeof(module) !== 'undefined') {
       return this.gameOverChecker(this.game);
     };
 
+    Turns.prototype.canCheckGameOver = function() {
+      return (typeof this.gameOverChecker !== 'undefined');
+    }
+
     Turns.prototype.finishTurn = function() {
       var thisTurn = this.getCurrentTurn();
       if (typeof thisTurn.afterEndTurn !== 'undefined') {

@@ -80,6 +80,49 @@ if (typeof(module) !== 'undefined') {
       }
     };
 
+    Board.prototype.getInBetween = function(x1, y1, x2, y2) {
+      if (x1 != x2 && y1 != y2 && Math.abs(x1 - x2) != Math.abs(y1 - y2)) {
+        return undefined;
+      }
+      var foundActors = [];
+      if (x1 == x2) {
+        for (var i = Math.min(y1, y2); i <= Math.max(y1, y2); i++) {
+          foundActors = foundActors.concat(board.actors[x1][i]);
+        }
+      } else if (y1 == y2) {
+        for (var i = Math.min(x1, x2); i <= Math.max(x1, x2); i++) {
+          foundActors = foundActors.concat(board.actors[i][y1]);
+        }
+      } else {
+        if (x1 < x2) {
+          var tx = x1;
+          var ty = y1;
+          var fx = x2;
+          var fy = y2;
+        } else {
+          var tx = x2;
+          var ty = y2;
+          var fx = x1;
+          var fy = y1;
+        }
+        do {
+          foundActors = foundActors.concat(board.actors[tx][ty]);
+          if (tx < fx) {
+            tx++;
+          } else {
+            tx--;
+          }
+          if (ty < fy) {
+            ty++;
+          } else {
+            ty--;
+          }
+        } while (tx != fx && ty != fy);
+        foundActors = foundActors.concat(board.actors[tx][ty]);
+      }
+      return foundActors;
+    }
+
     return Board;
   })();
 

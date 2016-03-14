@@ -25,8 +25,12 @@
       <div><b>Current Turn</b><p id="currentTurn" style="text-align:center;"></p></div>
       <div><b>Turn Order</b><ol id="turnOrder" style="padding:15px; margin:0px; top:50%;"></ol> </div>
       <div style="text-align: center;">
+        <button type="button" id='highlightActive' style="margin-right:auto; margin-left:auto;">Highlight Active Actors</button>
+      </div>
+      <div style="text-align: center;">
         <button type="button" id='endTurn' style="margin-right:auto; margin-left:auto;">End Turn</button>
       </div>
+      <h2 id="gameOver" style="visibility:hidden;">GAME OVER</h2>
     </div>
 
     <div id="container" style="margin-right: 15px; vertical-align:top; display:inline-block;">
@@ -72,6 +76,18 @@ window.onload = function() {
     CompleteGame.turns.finishTurn();
     drawBoard();
     updateStats();
+    }, false);
+    document.getElementById('highlightActive').addEventListener('click', function(e) {
+      for (var i = 0; i < HEIGHT; i++) {
+        for (var j = 0; j < WIDTH; j++) {
+          var actors = CompleteGame.board.actors[j][i];
+          for (var k = 0; k < actors.length; k++) {
+            if (actors[k].active)
+              highlightActive(j, i);
+            break;
+          }
+        }
+      }
     }, false);
   document.getElementById('title').innerHTML = CompleteGame.title;
   updateStats();
@@ -152,6 +168,18 @@ var svg = document.createSvg("svg");
                   highlight.setAttribute("xpos", i);
                   highlight.setAttribute("ypos", j);
                   highlight.setAttribute("fill-opacity", 0);
+
+                  var activeHighlight = document.createSvg("rect");
+                  activeHighlight.setAttribute("actorCount", 0);
+                  activeHighlight.setAttribute("width", size);
+                  activeHighlight.setAttribute("height", size);
+                  activeHighlight.setAttribute("fill", '#00ffff');
+                  // highlight.setAttribute("stroke", '#339900');
+                  activeHighlight.setAttribute('x', .1);
+                  activeHighlight.setAttribute('y', -.1);
+                  activeHighlight.setAttribute("xpos", i);
+                  activeHighlight.setAttribute("ypos", j);
+                  activeHighlight.setAttribute("fill-opacity", 0);
                   // highlight.setAttribute("stroke-opacity", 0);
 
 
@@ -186,6 +214,7 @@ var svg = document.createSvg("svg");
                   g.appendChild(text);
                   g.appendChild(count);
                   g.appendChild(highlight);
+                  g.appendChild(activeHighlight);
                   svg.appendChild(g);
                 }  
               }
@@ -207,7 +236,7 @@ var svg = document.createSvg("svg");
 
             function showActors(x, y) {
           // board should a 3D array with x and y as the key(position) and value is an array of actors on that position
-
+          clearActiveHighlight();
           var actors = CompleteGame.board.actors[x][y];
           var highlight = false;
           var acteeCount = 0;
@@ -243,12 +272,17 @@ var svg = document.createSvg("svg");
               clearTables('acteesTableBody');
               clearTables('actorTableBody');
               clearTables('actionTableBody');
-
               selectedAction.act(selectedActor, lastActee);
               drawBoard();
+              updateGameOver();
           }
         }
 
+        function updateGameOver() {
+          if (CompleteGame.turns.canCheckGameOver() && CompleteGame.turns.isGameOver()) {
+            document.getElementById("gameOver").style.visibility = "visible";
+          }
+        }
 
 
         var container = document.getElementById("container");
@@ -328,6 +362,22 @@ var svg = document.createSvg("svg");
           var r = getElementAt(x, y);
           var child = r.children;
           var highlight = child[4];
+          // highlight.setAttribute('stroke-opacity', 0.75);
+          highlight.setAttribute('fill-opacity', 0.5);
+        }
+
+        function clearActiveHighlight() {
+          for (var i = 0; i < svg.children.length; i++) {
+            var highlight = svg.children[i].children[5];
+            // highlight.setAttribute('stroke-opacity', 0);
+            highlight.setAttribute('fill-opacity', 0);
+          }
+        }
+
+        function highlightActive(x, y) {
+          var r = getElementAt(x, y);
+          var child = r.children;
+          var highlight = child[5];
           // highlight.setAttribute('stroke-opacity', 0.75);
           highlight.setAttribute('fill-opacity', 0.5);
         }
@@ -433,6 +483,7 @@ var svg = document.createSvg("svg");
 
               selectedAction.act(selectedActor, actee);
               drawBoard();
+              updateGameOver();
             }, false);
 
           }

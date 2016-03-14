@@ -87,6 +87,25 @@ turns.setTurnCompleteChecker(function(game) {
   return game.hasSet;
 });
 
+turns.setGameOverChecker(function(game) {
+   var bh = game.board.getInBetween(0, 0, 2, 0);
+   var bv = game.board.getInBetween(0, 0, 0, 2);
+   var mh = game.board.getInBetween(0, 1, 2, 1);
+   var mv = game.board.getInBetween(1, 0, 1, 2);
+   var th = game.board.getInBetween(2, 2, 0, 2);
+   var tv = game.board.getInBetween(2, 2, 2, 0);
+   var d1 = game.board.getInBetween(0, 0, 2, 2);
+   var d2 = game.board.getInBetween(2, 0, 0, 2);
+   return ((bh[0].symbol === bh[1].symbol) && (bh[1].symbol === bh[2].symbol)) && (bh[0].symbol === 'X' || bh[0].symbol === 'O') ||
+          ((bv[0].symbol === bv[1].symbol) && (bv[1].symbol === bv[2].symbol)) && (bv[0].symbol === 'X' || bv[0].symbol === 'O') ||
+          ((mh[0].symbol === mh[1].symbol) && (mh[1].symbol === mh[2].symbol)) && (mh[0].symbol === 'X' || mh[0].symbol === 'O') ||
+          ((mv[0].symbol === mv[1].symbol) && (mv[1].symbol === mv[2].symbol)) && (mv[0].symbol === 'X' || mv[0].symbol === 'O') ||
+          ((th[0].symbol === th[1].symbol) && (th[1].symbol === th[2].symbol)) && (th[0].symbol === 'X' || th[0].symbol === 'O') ||
+          ((tv[0].symbol === tv[1].symbol) && (tv[1].symbol === tv[2].symbol)) && (tv[0].symbol === 'X' || tv[0].symbol === 'O') ||
+          ((d1[0].symbol === d1[1].symbol) && (d1[1].symbol === d1[2].symbol)) && (d1[0].symbol === 'X' || d1[0].symbol === 'O') ||
+          ((d2[0].symbol === d2[1].symbol) && (d2[1].symbol === d2[2].symbol)) && (d2[0].symbol === 'X' || d2[0].symbol === 'O');
+});
+
 var activeReq = Actor.getEmptyRequirement();
 activeReq.addTag("Playable");
 var resetHasSet = function() {
@@ -102,18 +121,18 @@ oTurn.requirementForActiveStart = activeReq;
 oTurn.beforeStart = resetHasSet;
 turns.addTurn(oTurn);
 
-var autoTurn = Turns.getEmptyTurn("Auto");
-var toDo = Turns.getEmptyToDo();
-toDo.setActor(board.actors[2][2][0]);
-toDo.setAction(changeToX);
-toDo.setActee(board.actors[2][2][0]);
-autoTurn.addToDo(toDo);
-toDo = Turns.getEmptyToDo();
-toDo.setActor(board.actors[0][0][0]);
-toDo.setAction(changeToX);
-toDo.setActee(board.actors[1][0][0]);
-autoTurn.addToDo(toDo);
-turns.addTurn(autoTurn);
+// var autoTurn = Turns.getEmptyTurn("Auto");
+// var toDo = Turns.getEmptyToDo();
+// toDo.setActor(board.actors[2][2][0]);
+// toDo.setAction(changeToX);
+// toDo.setActee(board.actors[2][2][0]);
+// autoTurn.addToDo(toDo);
+// toDo = Turns.getEmptyToDo();
+// toDo.setActor(board.actors[0][0][0]);
+// toDo.setAction(changeToX);
+// toDo.setActee(board.actors[1][0][0]);
+// autoTurn.addToDo(toDo);
+// turns.addTurn(autoTurn);
 
 var TicTacToe = new Game("Tic Tac Toe", board, turns);
 TicTacToe.hasSet = false;
