@@ -12,70 +12,80 @@
   <script src="template.js"></script>
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 </head>
-<body>
-<div id='stats' style="float:left; margin-right:20px">
-  <div><b>Turn Number</b><p id="numTurns" style="text-align:center;">0</p></div>
-  <div><b>Total Turn Cycles</b><p id="numCycles" style="text-align:center;">0</p></div>
-  <div><b>Current Turn</b><p id="currentTurn" style="text-align:center;"></p></div>
-  <div><b>Turn Order</b><ol id="turnOrder" style="padding:15px; margin:0px; top:50%;"></ol> </div>
-  <div style="text-align: center;">
-    <button type="button" id='endTurn' style="margin-right:auto; margin-left:auto;">End Turn</button>
+<body style="font-family:Rockwell, Georgia, Calibri;">
+
+<div>
+
+  <h1 id="title" style="text-align:center; margin-bottom: 20px; padding-left:75px;"></h1>
+
+  <div style="text-align:center;">
+    <div id='stats' style="display:inline-block; vertical-align:top; margin-right:20px">
+      <div><b>Turn Number</b><p id="numTurns" style="text-align:center;">0</p></div>
+      <div><b>Total Turn Cycles</b><p id="numCycles" style="text-align:center;">0</p></div>
+      <div><b>Current Turn</b><p id="currentTurn" style="text-align:center;"></p></div>
+      <div><b>Turn Order</b><ol id="turnOrder" style="padding:15px; margin:0px; top:50%;"></ol> </div>
+      <div style="text-align: center;">
+        <button type="button" id='endTurn' style="margin-right:auto; margin-left:auto;">End Turn</button>
+      </div>
+    </div>
+
+    <div id="container" style="margin-right: 15px; vertical-align:top; display:inline-block;">
+    </div>
+
+    <div id='tables' style="display:inline-block;">
+      <table id='actors' border='2' style="margin-top: 0px; margin-left:3px; border-collapse: collapse;">
+       <thead>
+        <tr>
+          <th>Actors</th>
+        </tr>
+      </thead>
+      <tbody id='actorTableBody'>
+      </tbody>
+      </table>
+      <table id='actions' border='2' style="margin-left:3px; vertical-align:top; margin-top:10px; border-collapse: collapse;">
+       <thead>
+        <tr>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id='actionTableBody'>
+      </tbody>
+      </table>
+      <table id='actees' border='2' style="margin-left:3px; margin-top:10px; border-collapse: collapse; clear: right">
+       <thead>
+        <tr>
+          <th>Actees</th>
+        </tr>
+      </thead>
+      <tbody id='acteesTableBody'>
+      </tbody>
+      </table>
+    </div>
   </div>
-</div>
 
-<div id="container" style="margin-right: 15px; float:left">
-</div>
-
-<div id='tables' style="float:left">
-  <table id='actors' border='2' style="margin-top: 0px; margin-left:3px; border-collapse: collapse;">
-   <thead>
-    <tr>
-      <th>Actors</th>
-    </tr>
-  </thead>
-  <tbody id='actorTableBody'>
-  </tbody>
-  </table>
-  <table id='actions' border='2' style="margin-left:3px; margin-top:10px; border-collapse: collapse;">
-   <thead>
-    <tr>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody id='actionTableBody'>
-  </tbody>
-  </table>
-  <table id='actees' border='2' style="margin-left:3px; margin-top:10px; border-collapse: collapse; clear: right">
-   <thead>
-    <tr>
-      <th>Actees</th>
-    </tr>
-  </thead>
-  <tbody id='acteesTableBody'>
-  </tbody>
-  </table>
 </div>
 
 <script>
 
 window.onload = function() {
   document.getElementById('endTurn').addEventListener('click', function(e) {
-    turns.finishTurn();
+    CompleteGame.turns.finishTurn();
     drawBoard();
     updateStats();
     }, false);
+  document.getElementById('title').innerHTML = CompleteGame.title;
   updateStats();
   drawBoard();
-  turns.startTurn();
-  for (i in turns.turnOrder) {
-    document.getElementById('turnOrder').innerHTML += "<li>" + turns.turnOrder[i].name + "</li>"; 
+  CompleteGame.turns.startTurn();
+  for (i in CompleteGame.turns.turnOrder) {
+    document.getElementById('turnOrder').innerHTML += "<li>" + CompleteGame.turns.turnOrder[i].name + "</li>"; 
   }
 }
 
 function updateStats() {
-  document.getElementById("numTurns").innerHTML = turns.numTurns + 1;
-  document.getElementById("numCycles").innerHTML = turns.numCycles + 1;
-  document.getElementById("currentTurn").innerHTML = turns.getCurrentTurn().name;
+  document.getElementById("numTurns").innerHTML = CompleteGame.turns.numTurns + 1;
+  document.getElementById("numCycles").innerHTML = CompleteGame.turns.numCycles + 1;
+  document.getElementById("currentTurn").innerHTML = CompleteGame.turns.getCurrentTurn().name;
 }
 
 document.createSvg = function(tagName) {
@@ -104,8 +114,8 @@ var svg = document.createSvg("svg");
             // svg.setAttribute('str')
 
             var borderColor = 'black'
-            if (typeof board.borderColor !== 'undefined')
-              borderColor = board.borderColor;
+            if (typeof CompleteGame.board.borderColor !== 'undefined')
+              borderColor = CompleteGame.board.borderColor;
             
             svg.style.outline = '9px solid ' + borderColor;
             for(var i = 0; i < x; i++) { // x
@@ -198,15 +208,21 @@ var svg = document.createSvg("svg");
             function showActors(x, y) {
           // board should a 3D array with x and y as the key(position) and value is an array of actors on that position
 
-          var actors = board.actors[x][y];
+          var actors = CompleteGame.board.actors[x][y];
           var highlight = false;
+          var acteeCount = 0;
+          var lastActee = undefined;
           if (typeof activeAction !== 'undefined') {
+
             for (i in actors) {
               if (activeAction.applicable(activeActor, actors[i])) {
+                acteeCount++;
+                lastActee = actors[i];
                 insertActeeRow(actors[i]);
                 highlight = true;
               }
             }
+
             selectedActor = activeActor;
             selectedAction = activeAction;
             activeActor = undefined;
@@ -217,12 +233,19 @@ var svg = document.createSvg("svg");
             clearTables('actorTableBody');
             for (i in actors) {
               if (actors[i].active) {
-                insertActorRow(actors[i].name, actors);
+                insertActorRow(actors[i].name, actors, actors[i].description);
               }
             }
 
             clearTables('actionTableBody');
             clearTables('acteesTableBody');
+          } else if (acteeCount == 1) {
+              clearTables('acteesTableBody');
+              clearTables('actorTableBody');
+              clearTables('actionTableBody');
+
+              selectedAction.act(selectedActor, lastActee);
+              drawBoard();
           }
         }
 
@@ -320,7 +343,7 @@ var svg = document.createSvg("svg");
         }
 
         // adapted from http://stackoverflow.com/questions/18333427/how-to-insert-row-in-html-table-body-in-javascript
-        function insertActorRow(text, arr) {
+        function insertActorRow(text, arr, desc) {
           var tableRef = document.getElementById('actors').getElementsByTagName('tbody')[0];
 
           // Insert a row in the table at the last row
@@ -332,6 +355,7 @@ var svg = document.createSvg("svg");
           // Append a text node to the cell
           var newText  = document.createTextNode(text);
           newCell.appendChild(newText);
+          newCell.title = desc;
           newCell.addEventListener('click', function(e) {
             var name = e.target.innerHTML;
             clearTables('actionTableBody');
@@ -341,7 +365,7 @@ var svg = document.createSvg("svg");
                 // need the list of actions!!
               insertActionRow(arr[i])
             }
-            // var actors = board.actors[e.target.getAttribute('xpos')][]
+            // var actors = CompleteGame.board.actors[e.target.getAttribute('xpos')][]
             // alert(text);
           });
         }
@@ -419,7 +443,7 @@ var svg = document.createSvg("svg");
             activeAction = action;
             for (var i = 0; i < HEIGHT; i++) {
               for (var j = 0; j < WIDTH; j++) {
-                var actors = board.actors[j][i];
+                var actors = CompleteGame.board.actors[j][i];
                 for (var k = 0; k < actors.length; k++) {
                 // TODO: CHECK POSITION OF board and hightlight if action
                 // can be performed
@@ -442,9 +466,9 @@ var svg = document.createSvg("svg");
         }
 
         function drawBoard() {
-          var actors = board.actors;
+          var actors = CompleteGame.board.actors;
           // for each actor list in actors, draw element on board
-          document.getElementById('endTurn').disabled =  !turns.isTurnComplete();
+          document.getElementById('endTurn').disabled =  !CompleteGame.turns.isTurnComplete();
           for (var i = 0; i < WIDTH; i++) {
             for (var j = 0; j < HEIGHT; j++) {
               // TODO: fill board for each actor list
