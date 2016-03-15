@@ -68,8 +68,12 @@
       this.representation = representation;
     };
 
-    Actor.prototype.addTag = function(type) {
-      this.tags.push(type);
+    Actor.prototype.addTag = function(tag) {
+      this.tags.push(tag);
+    };
+
+    Actor.prototype.hasTag = function(tag) {
+      return this.tags.indexOf(tag) >= 0
     };
 
     Actor.prototype.addAction = function(action) {
@@ -103,12 +107,12 @@
             case 'y':
             case "active":
               checkOnce = true;
-              res &= this[key] === requirement[key];
+              res = res && this[key] === requirement[key];
               break;
             case "tags":
               for (var i = 0; i < requirement.tags.length; i++) {
                 checkOnce = true;
-                res &= this.tags.indexOf(requirement.tags[i]) >= 0;
+                res = res && this.hasTag(requirement.tags[i]);
               }
               break;
             default:

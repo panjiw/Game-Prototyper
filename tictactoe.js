@@ -1,3 +1,4 @@
+// Setup empty 3x3 board
 var board = new Board(3, 3);
 
 var baseTile = new Tile("base", 'b', 'Base tile, does nothing');
@@ -6,12 +7,14 @@ board.setBorderColor("black");
 var tiles2D = [['b', 'b', 'b'], ['b', 'b', 'b'], ['b', 'b', 'b']];
 board.fillTiles(tiles2D);
 
+// Create state storing actor
 var xo = new Actor("XO", "", "X or O actor");
 baseTile.x = undefined;
 baseTile.y = undefined;
 xo.addBlacklist(baseTile);
 xo.addTag("Playable");
 
+// Create transform action
 var onlyMyself = function(self, other) {
   return self.set ? false : self === other;
 };
@@ -36,12 +39,15 @@ var changeToO = new Action("O", "Change to O");
 changeToO.setApplicabilityChecker(onlyMyself);
 changeToO.setAct(function (self, other) { setSymbol("O", self); });
 
+// Add the action to the actor
 xo.addAction(changeToX);
 xo.addAction(changeToO);
 
+// fill the board
 var actors3D = [[[''], [''], ['']], [[''], [''], ['']], [[''], [''], ['']]];
 board.fillActors(actors3D);
 
+// Setup the turns
 var turns = new Turns();
 turns.setTurnCompleteChecker(function(game) {
   return game.hasSet;
@@ -71,6 +77,8 @@ activeReq.addTag("Playable");
 var resetHasSet = function() {
   CompleteGame.hasSet = false;
 };
+
+// Add the turns in order
 var xTurn = Turns.getPlayerTurn("Player 1");
 xTurn.requirementForActiveStart = activeReq;
 xTurn.beforeStart = resetHasSet;
@@ -81,5 +89,8 @@ oTurn.requirementForActiveStart = activeReq;
 oTurn.beforeStart = resetHasSet;
 turns.addTurn(oTurn);
 
+// Create game
 var TicTacToe = new Game("Tic Tac Toe", board, turns);
+
+// Setup whole game data
 TicTacToe.hasSet = false;
