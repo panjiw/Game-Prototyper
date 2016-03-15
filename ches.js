@@ -56,6 +56,9 @@ var locationApplicability = function(self, other, kill) {
             if (kill) {
                 return other.y - self.y == dir && Math.abs(other.x - self.x) == 1;
             } else {
+                if ((self.y == 1 && pieceColor == "White") || (self.y == 6 && pieceColor == "Black")) {
+                    return other.x == self.x && (other.y == self.y + dir * 2 || other.y == self.y + dir);
+                }
                 return other.x == self.x && other.y == self.y + dir;
             }
         case "Rook":
