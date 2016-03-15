@@ -1,12 +1,14 @@
 var board = new Board(3, 3);
 
 var baseTile = new Tile("base", 'b', 'Base tile, does nothing');
-board.setBorderColor("black")
+board.setBorderColor("black");
 
 var tiles2D = [['b', 'b', 'b'], ['b', 'b', 'b'], ['b', 'b', 'b']];
 board.fillTiles(tiles2D);
 
 var xo = new Actor("XO", "", "X or O actor");
+baseTile.x = undefined;
+baseTile.y = undefined;
 xo.addBlacklist(baseTile);
 xo.addTag("Playable");
 
@@ -24,7 +26,7 @@ var setSymbol = function(symbol, self) {
   CompleteGame.hasSet = true;
   self.symbol = symbol;
   CompleteGame.board.setActive(falseRequirement);
-}
+};
 
 var changeToX = new Action("X", "Change to X");
 changeToX.setApplicabilityChecker(onlyMyself);

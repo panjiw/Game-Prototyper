@@ -121,7 +121,7 @@ if (typeof(module) !== 'undefined') {
         foundActors = foundActors.concat(board.actors[tx][ty]);
       }
       return foundActors;
-    }
+    };
 
     return Board;
   })();

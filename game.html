@@ -239,11 +239,18 @@ var svg = document.createSvg("svg");
             function showActors(x, y) {
           // board should a 3D array with x and y as the key(position) and value is an array of actors on that position
           clearActiveHighlight();
+          var tile = CompleteGame.board.tiles[x][y];
           var actors = CompleteGame.board.actors[x][y];
           var highlight = false;
           var acteeCount = 0;
           var lastActee = undefined;
           if (typeof activeAction !== 'undefined') {
+            if (activeAction.applicable(activeActor, tile)) {
+              acteeCount++;
+              lastActee = tile;
+              insertActeeRow(tile);
+              highlight = true;
+            }
 
             for (i in actors) {
               if (activeAction.applicable(activeActor, actors[i])) {
@@ -516,6 +523,11 @@ var svg = document.createSvg("svg");
             activeAction = action;
             for (var i = 0; i < HEIGHT; i++) {
               for (var j = 0; j < WIDTH; j++) {
+                var tile = CompleteGame.board.tiles[j][i];
+                if (action.applicable(actor, tile)) {
+                  highlight(j, i);
+                  continue;
+                }
                 var actors = CompleteGame.board.actors[j][i];
                 for (var k = 0; k < actors.length; k++) {
                   // TODO: CHECK POSITION OF board and hightlight if action
