@@ -518,15 +518,16 @@ var svg = document.createSvg("svg");
               for (var j = 0; j < WIDTH; j++) {
                 var actors = CompleteGame.board.actors[j][i];
                 for (var k = 0; k < actors.length; k++) {
-                // TODO: CHECK POSITION OF board and hightlight if action
-                // can be performed
-                if (action.applicable(actor, actors[k]))
-                  highlight(j, i);
-                break;
+                  // TODO: CHECK POSITION OF board and hightlight if action
+                  // can be performed
+                  if (action.applicable(actor, actors[k])) {
+                    highlight(j, i);
+                    break;
+                  }
+                }
               }
             }
           }
-        }
 
 
         // clearBoth is a boolean

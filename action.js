@@ -19,7 +19,14 @@
     };
 
     Action.prototype.setApplicabilityChecker = function(checker) {
-      this.applicable = checker;
+      this.applicable = function(self, other) {
+        for (var i = 0; i < self.blacklist.length; i++) {
+          if (other.passRequirement(self.blacklist[i])) {
+            return false;
+          }
+        }
+        return checker(self, other);
+      };
     };
 
     Action.prototype.setAct = function(act) {

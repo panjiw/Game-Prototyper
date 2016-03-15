@@ -50,6 +50,16 @@
       return newActor;
     };
 
+    Actor.prototype.setSymbol = function(symbol) {
+      this.symbol = symbol;
+      if (typeof Actor.symbolMap === 'undefined') {
+        Actor.symbolMap = {};
+      }
+      delete Actor.symbolMap[this.symbol];
+      this.symbol = symbol;
+      Actor.symbolMap[symbol] = this;
+    };
+
     Actor.prototype.setColor = function(color) {
       this.color = color;
     };
@@ -66,8 +76,8 @@
       this.actions.push(action);
     };
 
-    Actor.prototype.addBlacklist = function(actor) {
-      this.blacklist.push(actor);
+    Actor.prototype.addBlacklist = function(requirement) {
+      this.blacklist.push(requirement);
     };
 
     Actor.getEmptyRequirement = function() {
