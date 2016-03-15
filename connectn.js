@@ -1,5 +1,5 @@
-var maxX = 7;
-var maxY = 7;
+var maxX = 10;
+var maxY = 10;
 var TURNS_PER_PLAYER = 1;
 
 var board = new Board(maxX, maxY);
@@ -21,9 +21,10 @@ board.setBorderColor("black")
 var tiles2D = [];
 for (var i = 0; i < maxY; i++) {
   var arr = [];
-  for (var j = 0; j < maxY; j++) {
-    arr.push('b')
+  for (var j = 0; j < maxX; j++) {
+    arr.push('b');
   }
+  tiles2D.push(arr);
 }
 
 board.fillTiles(tiles2D);
@@ -65,14 +66,29 @@ dropPiece.setAct(function (self, other) { setSymbol("O", self); });
 
 xo.addAction(dropPiece);
 
-var actors3D = [[['no'], ['no'], ['no'], ['no'], ['no'], ['no'], ['no']],
-               [['no'], ['no'], ['no'], ['no'], ['no'], ['no'], ['no']],
-               [['no'], ['no'], ['no'], ['no'], ['no'], ['no'], ['no']],
-               [['no'], ['no'], ['no'], ['no'], ['no'], ['no'], ['no']],
-               [['no'], ['no'], ['no'], ['no'], ['no'], ['no'], ['no']],
-               [['no'], ['no'], ['no'], ['no'], ['no'], ['no'], ['no']],
-               [[''], [''], [''], [''], [''], [''], ['']],
-               ];
+// var actors3D = [[['no'], ['no'], ['no'], ['no'], ['no'], ['no'], ['no']],
+//                [['no'], ['no'], ['no'], ['no'], ['no'], ['no'], ['no']],
+//                [['no'], ['no'], ['no'], ['no'], ['no'], ['no'], ['no']],
+//                [['no'], ['no'], ['no'], ['no'], ['no'], ['no'], ['no']],
+//                [['no'], ['no'], ['no'], ['no'], ['no'], ['no'], ['no']],
+//                [['no'], ['no'], ['no'], ['no'], ['no'], ['no'], ['no']],
+//                [[''], [''], [''], [''], [''], [''], ['']],
+//                ];
+
+var actors3D = [];
+for (var i = 0; i < maxY - 1; i++) {
+  var arr = [];
+  for (var j = 0; j < maxX; j++) {
+    arr.push(['no']);
+  }
+  actors3D.push(arr);
+}
+var arr = [];
+for (var i = 0; i < maxX; i++) {
+  arr.push(['']);
+}
+actors3D.push(arr);
+
 
 board.fillActors(actors3D);
 
