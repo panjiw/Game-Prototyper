@@ -56,7 +56,7 @@ if (typeof(module) !== 'undefined') {
       if (actor.x != -1 && actor.y != -1) {
         var i = this.actors[actor.x][actor.y].indexOf(actor);
         if (i > -1) {
-          this.actors[actor.x][actor.y] = this.actors[actor.x][actor.y].splice(i, 1);
+          this.actors[actor.x][actor.y].splice(i, 1);
         }
       }
 
