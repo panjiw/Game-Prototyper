@@ -572,7 +572,11 @@ var svg = document.createSvg("svg");
               }
               if (typeof CompleteGame.board.tiles[i][j].color !== 'undefined')
                 rect.setAttribute('fill', CompleteGame.board.tiles[i][j].color);
-
+              var len = tile.children.length;
+              for (var l = 6; l < len; l++) {
+                tile.removeChild(tile.lastChild);
+              }
+              text.innerHTML = "";
               for(var k = 0; k < actorList.length; k++) {
                 var actor = actorList[k];
                 var symbolColor = 'black';
