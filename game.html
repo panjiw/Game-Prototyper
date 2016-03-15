@@ -90,13 +90,13 @@ window.onload = function() {
         }
       }
     }, false);
-  document.getElementById('title').innerHTML = CompleteGame.title;  
+  document.getElementById('title').innerHTML = CompleteGame.title;
   document.title = CompleteGame.title;
   updateStats();
   drawBoard();
   CompleteGame.turns.startTurn();
   for (i in CompleteGame.turns.turnOrder) {
-    document.getElementById('turnOrder').innerHTML += "<li>" + CompleteGame.turns.turnOrder[i].name + "</li>"; 
+    document.getElementById('turnOrder').innerHTML += "<li>" + CompleteGame.turns.turnOrder[i].name + "</li>";
   }
 }
 
@@ -134,13 +134,13 @@ var svg = document.createSvg("svg");
             var borderColor = 'black'
             if (typeof CompleteGame.board.borderColor !== 'undefined')
               borderColor = CompleteGame.board.borderColor;
-            
+
             svg.style.outline = '9px solid ' + borderColor;
             for(var i = 0; i < x; i++) { // x
                 for(var j = 0; j < y; j++) { // y
 
                   var color1 = colors[(i+j) % colors.length];
-                  var color2 = colors[(i+j+1) % colors.length];  
+                  var color2 = colors[(i+j+1) % colors.length];
                   if (color1 == color2 && color1 != 'black') color2 = 'black';
                   else if (color1 == color2) color2 = 'white';
                   var g = document.createSvg("g");
@@ -218,7 +218,7 @@ var svg = document.createSvg("svg");
                   g.appendChild(highlight);
                   g.appendChild(activeHighlight);
                   svg.appendChild(g);
-                }  
+                }
               }
               svg.addEventListener(
                "click", function(e) {showActors(e.target.getAttribute('xpos'), e.target.getAttribute('ypos'))},
@@ -325,7 +325,7 @@ var svg = document.createSvg("svg");
             box.setAttribute('actorCount', Number(box.getAttribute('actorCount')) - 2);
             if (box.getAttribute('actorCount') < 0) {
               child[2].innerHTML = '';
-              svgimg.setAttributeNS('http://www.w3.org/1999/xlink','href', '');  
+              svgimg.setAttributeNS('http://www.w3.org/1999/xlink','href', '');
             }
           } else if (!link) {
             child[2].innerHTML = c;
@@ -346,7 +346,7 @@ var svg = document.createSvg("svg");
           if (child[2].innerHTML == '') { // we move an image
             var link = child[1].getAttribute('href');
             if (link == '')
-              return; 
+              return;
             removeActor(x, y);
             placeActor(newX, newY, '', link);
           } else { // we move a character
@@ -471,6 +471,7 @@ var svg = document.createSvg("svg");
             newCell.id = i + ' action';
             newCell.appendChild(newText);
             newCell.addEventListener('click', function(e) {
+              clearHighlight();
               var t = e.target.innerHTML;
               clearTables('acteesTableBody');
               // TODO: 
@@ -571,7 +572,7 @@ var svg = document.createSvg("svg");
               }
               if (typeof CompleteGame.board.tiles[i][j].color !== 'undefined')
                 rect.setAttribute('fill', CompleteGame.board.tiles[i][j].color);
-              
+
               for(var k = 0; k < actorList.length; k++) {
                 var actor = actorList[k];
                 var symbolColor = 'black';

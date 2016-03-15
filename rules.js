@@ -8,7 +8,7 @@ if (typeof(module) !== 'undefined') {
 }
 
 // SET THESE GLOBALS TO YOUR GAME
-var GAME_RULES = 'tictactoe.js';
+var GAME_RULES = 'ches.js';
 
 var rulesScript = document.createElement("script");
 rulesScript.type = 'text/javascript';
