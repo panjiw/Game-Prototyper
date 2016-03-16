@@ -30,3 +30,5 @@ Example of Connect N (connect 4 variant)
 ![Connect N game](https://raw.githubusercontent.com/panjiw/Game-Prototyper/master/imgs/connectn.png)
 
 ##### [Presentation Slides](https://docs.google.com/presentation/d/1mvTghClFfE2QHdOoav46sl_tNeklIoTZyLPgFQBUvXE/edit#slide=id.p4)
+
+##### [Connect N demo](https://youtu.be/QPseBI1HfxE)
