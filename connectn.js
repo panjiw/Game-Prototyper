@@ -1,3 +1,17 @@
+/*
+
+
+This is a variant of connect 4, the game where pieces are dropped from the top of a 
+standing board and would drop to the bottom. It's like tic tac toe but you must place
+from the bottom up.
+
+It's a prototype testing how it might play
+with changing board dimensions, and times each player can place a piece per turn.
+
+
+*/
+
+
 var maxX = 10;
 var maxY = 10;
 var TURNS_PER_PLAYER = 1;
@@ -7,6 +21,8 @@ var board = new Board(maxX, maxY);
 var baseTile = new Tile("base", 'b', 'Base tile, does nothing');
 baseTile.setColor("white");
 board.setBorderColor("black")
+
+// Filling the board with white tiles2D
 
 // var tiles2D = [['b', 'b', 'b', 'b', 'b', 'b', 'b'],
 //                ['b', 'b', 'b', 'b', 'b', 'b', 'b'], 
@@ -29,16 +45,28 @@ for (var i = 0; i < maxY; i++) {
 
 board.fillTiles(tiles2D);
 
+
+// fallThrough represents places on the board that the piece cannot be place. 
+
 var fallThrough = new Actor("cantChange", "no", "");
+
+// make transparent since I don't want symbol 'no' appearing on board
 fallThrough.setRepresentation("http://pgmagick.readthedocs.org/en/latest/_images/transparent.png");
 var xo = new Actor("Checker", "", "Red Or Black Checker Piece");
 xo.addBlacklist(baseTile);
+
+// These are the actors that will change into pieces on the board.
+// When clicked they will have actors checked against for playability against.
 xo.addTag("Playable");
 
+// The actors that the xo (playable) can interact with
+// Just going to only change this one
 var onlyMyself = function(self, other) {
   return self.set ? false : self === other;
 };
 
+
+// when 
 var falseRequirement = Actor.getEmptyRequirement();
 falseRequirement.addTag("None");
 
@@ -89,7 +117,7 @@ for (var i = 0; i < maxX; i++) {
 }
 actors3D.push(arr);
 
-
+// put the array representation into the board
 board.fillActors(actors3D);
 
 var turns = new Turns();
@@ -118,5 +146,8 @@ for (var i = 0; i < TURNS_PER_PLAYER; i++) {
 for (var i = 0; i < TURNS_PER_PLAYER; i++) {
   turns.addTurn(redTurn);
 }
+
+// Create the game
+// called by exporter.js which will connect your game to the webpage
 var ConnectN = new Game("Connect N", board, turns);
 ConnectN.hasSet = false;
