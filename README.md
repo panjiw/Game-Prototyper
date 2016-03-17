@@ -22,6 +22,8 @@ To play a game:
 2. change GAME_INSTANCE global constant to the name of the game created within (Ches, ConnectN, or TicTacToe)
 3. open grid.html in a web browser.
 
+To create your own game look through the commented examples (ches.js, connectn.js, and tictactoe.js). 
+
 
 #### [Design Document](https://docs.google.com/document/d/1nKquifqEW9GtLQqEZtQ7Ih1A0fvXhmvcY5sarV4C3-w/edit)
 
